@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>MINECRAFT</title>
+
+	<style type="text/css">
+		#my-canvas {
+			outline: 1px solid black;
+		}
+
+		#my-canvas-2 {
+			outline: 1px solid green;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="my-canvas" width="600" height="400"></canvas>
+	<canvas id="my-canvas-2" width="600" height="400"></canvas>
+</body>
+
+
+<script type="text/javascript">
+	let canvas = document.getElementById("my-canvas");
+	let ctx = canvas.getContext("2d");
+
+	let canvas2 = document.getElementById("my-canvas-2");
+	let ctx2 = canvas2.getContext("2d");
+
+	const WIDTH = 600;
+	const HEIGHT = 400;
+	const FPS = 60;
+
+	const WHITE = "rgb(255,255,255)";
+	const SCREEN_CLEAR = "#EEEEEE";
+	const FLOOR_COLOR = "#334257";
+	const WALL_COLOR  = "#548CA8";
+
+	const two_pi = 2 * Math.PI;
+	const visionSpread = Math.PI/2;
+	const rotateAngle = Math.PI/32;
+	const drawDistance = 80;
+
+	const controller = {
+		ArrowDown: 0,
+		ArrowUp: 0,
+		ArrowLeft: 0,
+		ArrowRight: 0,
+		KeyA: 0,
+		KeyD: 0,
+	}
+	const player = {
+		x: WIDTH/2+10,
+		y: HEIGHT/2,
+		w: 10,
+		h: 10,
+		color: "#D54C4C",
+		angle: 0,
+	};
+	let enemy = {
+		x: WIDTH/2 + 20,
+		y: HEIGHT/2 - 35,
+		z: 300,
+		w: 20,
+		h: 20,
+	};
+	let enemy_2 = {
+		x: WIDTH/2 - 80,
+		y: HEIGHT/2 + 50,
+		z: 300,
+		w: 60,
+		h: 20,
+	};
+
+	function clearScreen()
+	{
+		ctx.fillStyle = SCREEN_CLEAR;
+		ctx.fillRect(0, 0, WIDTH, HEIGHT);
+	}
+
+	function clearScreen_2()
+	{
+		ctx2.fillStyle = SCREEN_CLEAR;
+		ctx2.fillRect(0, 0, WIDTH, HEIGHT);
+	}
+
+	function drawPlayer_2()
+	{
+		ctx2.fillStyle = player["color"];
+		ctx2.fillRect(player["x"], player["y"], player["w"], player["h"]);
+	}
+
+	function drawEnemy_2()
+	{
+		for(en of [enemy, enemy_2])
+		{
+			ctx2.fillStyle = en["color"];
+			ctx2.fillRect(
+				en["x"],
+				en["y"],
+				en["w"],
+				en["h"]
+			);
+		}
+	}
+
+	function insideEnemy(pos_x, pos_y, enemy)
+	{
+		for(i=enemy["x"]; i<enemy["x"]+enemy["w"]; i++)
+			for(j=enemy["y"]; j<enemy["y"]+enemy["h"]; j++)
+			{
+				if(pos_x === i && pos_y === j)
+				{
+					return true;
+				}
+			}
+		return false;
+	}
+
+	document.addEventListener("keydown", function(e) {
+		if(e.code === "ArrowLeft")  { controller["ArrowLeft"] = 1; }
+		if(e.code === "ArrowRight") { controller["ArrowRight"] = 1; }
+		if(e.code === "ArrowUp")    { controller["ArrowUp"] = 1; }
+		if(e.code === "ArrowDown")  { controller["ArrowDown"] = 1; }
+		if(e.code === "KeyA")       { controller["KeyA"] = 1; }
+		if(e.code === "KeyD")       { controller["KeyD"] = 1; }
+	})
+
+	document.addEventListener("keyup", function(e) {
+		if(e.code === "ArrowLeft")  { controller["ArrowLeft"] = 0; }
+		if(e.code === "ArrowRight") { controller["ArrowRight"] = 0; }
+		if(e.code === "ArrowUp")    { controller["ArrowUp"] = 0; }
+		if(e.code === "ArrowDown")  { controller["ArrowDown"] = 0; }
+		if(e.code === "KeyA")       { controller["KeyA"] = 0; }
+		if(e.code === "KeyD")       { controller["KeyD"] = 0; }
+	})
+
+	setInterval(function(e) {
+		// Move character
+		if(controller["ArrowLeft"] === 1)
+		{
+			player["x"] -= Math.cos(player["angle"] + visionSpread);
+			player["y"] -= Math.sin(player["angle"] + visionSpread);
+		}
+		if(controller["ArrowRight"] === 1)
+		{
+			player["x"] += Math.cos(player["angle"] + visionSpread);
+			player["y"] += Math.sin(player["angle"] + visionSpread);
+		}
+		if(controller["ArrowUp"] === 1)
+		{
+			player["x"] += Math.cos(player["angle"] + visionSpread - Math.PI / 2);
+			player["y"] += Math.sin(player["angle"] + visionSpread - Math.PI / 2);
+
+		}
+		if(controller["ArrowDown"] === 1)
+		{
+			player["x"] -= Math.cos(player["angle"] + visionSpread - Math.PI / 2);
+			player["y"] -= Math.sin(player["angle"] + visionSpread - Math.PI / 2);
+		}
+		
+		// Rotate character
+		if(controller["KeyA"] === 1)
+		{
+			player["angle"] -= rotateAngle;
+			player["angle"] %= (two_pi);
+		}
+		if(controller["KeyD"] === 1)
+		{
+			player["angle"] += rotateAngle;
+			player["angle"] %= (two_pi);
+		}
+
+		// Figure out what the POV should look like
+		let angle_incr = (visionSpread) / WIDTH;
+		let rel_heights = [];
+		for(
+			angle = player["angle"] - visionSpread / 2;
+			angle < player["angle"] + visionSpread / 2;
+			angle += angle_incr)
+		{
+			let depthReached = 10000000;
+			for(let d=0; d<drawDistance; d++)
+			{
+				let pos_vector = [
+					player["x"] + ( Math.cos(angle) ) * d,
+					player["y"] + ( Math.sin(angle) ) * d
+				]
+
+				pos_vector[0] = parseInt(pos_vector[0]);
+				pos_vector[1] = parseInt(pos_vector[1]);
+
+				if(insideEnemy(pos_vector[0], pos_vector[1], enemy))
+				{
+					depthReached = Math.min(d, depthReached);
+				}
+			}
+			rel_heights.push(depthReached);
+		}
+
+		// draw the floor
+		clearScreen();
+		ctx.fillStyle = FLOOR_COLOR
+		ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
+
+		// draw the enemies
+		ctx.fillStyle = WALL_COLOR;
+		for(k=0; k<WIDTH; k+=1)
+		{
+			let enemyHeight = enemy["z"] / rel_heights[k] * (HEIGHT / drawDistance);
+			let y_pos = (HEIGHT - enemyHeight) / 2
+			ctx.fillRect(k, y_pos, 1, enemyHeight);
+		}
+
+		// for debugging screen
+		clearScreen_2();
+		drawPlayer_2();
+		drawEnemy_2();
+	}, 1000 / FPS)
+
+</script>
+
+</html>
