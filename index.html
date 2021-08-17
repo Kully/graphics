@@ -42,7 +42,7 @@
 	const rotateAngle = Math.PI/32;
 	const drawDistance = 80;
 
-	const controller = {
+	const CONTROLLER = {
 		ArrowDown: 0,
 		ArrowUp: 0,
 		ArrowLeft: 0,
@@ -50,7 +50,7 @@
 		KeyA: 0,
 		KeyD: 0,
 	}
-	const player = {
+	const PLAYER = {
 		x: WIDTH/2+10,
 		y: HEIGHT/2,
 		w: 10,
@@ -63,13 +63,6 @@
 		y: HEIGHT/2 - 35,
 		z: 300,
 		w: 20,
-		h: 20,
-	};
-	let enemy_2 = {
-		x: WIDTH/2 - 80,
-		y: HEIGHT/2 + 50,
-		z: 300,
-		w: 60,
 		h: 20,
 	};
 
@@ -87,13 +80,13 @@
 
 	function drawPlayer_2()
 	{
-		ctx2.fillStyle = player["color"];
-		ctx2.fillRect(player["x"], player["y"], player["w"], player["h"]);
+		ctx2.fillStyle = PLAYER["color"];
+		ctx2.fillRect(PLAYER["x"], PLAYER["y"], PLAYER["w"], PLAYER["h"]);
 	}
 
 	function drawEnemy_2()
 	{
-		for(en of [enemy, enemy_2])
+		for(en of [enemy])
 		{
 			ctx2.fillStyle = en["color"];
 			ctx2.fillRect(
@@ -118,74 +111,81 @@
 		return false;
 	}
 
+	function movePlayer()
+	{
+		if(CONTROLLER["ArrowLeft"] === 1)
+		{
+			PLAYER["x"] -= Math.cos(PLAYER["angle"] + visionSpread);
+			PLAYER["y"] -= Math.sin(PLAYER["angle"] + visionSpread);
+		}
+		if(CONTROLLER["ArrowRight"] === 1)
+		{
+			PLAYER["x"] += Math.cos(PLAYER["angle"] + visionSpread);
+			PLAYER["y"] += Math.sin(PLAYER["angle"] + visionSpread);
+		}
+		if(CONTROLLER["ArrowUp"] === 1)
+		{
+			PLAYER["x"] += Math.cos(PLAYER["angle"] + visionSpread - Math.PI / 2);
+			PLAYER["y"] += Math.sin(PLAYER["angle"] + visionSpread - Math.PI / 2);
+
+		}
+		if(CONTROLLER["ArrowDown"] === 1)
+		{
+			PLAYER["x"] -= Math.cos(PLAYER["angle"] + visionSpread - Math.PI / 2);
+			PLAYER["y"] -= Math.sin(PLAYER["angle"] + visionSpread - Math.PI / 2);
+		}
+	}
+
+	function rotatePlayer()
+	{
+		if(CONTROLLER["KeyA"] === 1)
+		{
+			PLAYER["angle"] -= rotateAngle;
+			PLAYER["angle"] %= (two_pi);
+		}
+		if(CONTROLLER["KeyD"] === 1)
+		{
+			PLAYER["angle"] += rotateAngle;
+			PLAYER["angle"] %= (two_pi);
+		}
+	}
+
 	document.addEventListener("keydown", function(e) {
-		if(e.code === "ArrowLeft")  { controller["ArrowLeft"] = 1; }
-		if(e.code === "ArrowRight") { controller["ArrowRight"] = 1; }
-		if(e.code === "ArrowUp")    { controller["ArrowUp"] = 1; }
-		if(e.code === "ArrowDown")  { controller["ArrowDown"] = 1; }
-		if(e.code === "KeyA")       { controller["KeyA"] = 1; }
-		if(e.code === "KeyD")       { controller["KeyD"] = 1; }
+		if(e.code === "ArrowLeft")  { CONTROLLER["ArrowLeft"] = 1; }
+		if(e.code === "ArrowRight") { CONTROLLER["ArrowRight"] = 1; }
+		if(e.code === "ArrowUp")    { CONTROLLER["ArrowUp"] = 1; }
+		if(e.code === "ArrowDown")  { CONTROLLER["ArrowDown"] = 1; }
+		if(e.code === "KeyA")       { CONTROLLER["KeyA"] = 1; }
+		if(e.code === "KeyD")       { CONTROLLER["KeyD"] = 1; }
 	})
 
 	document.addEventListener("keyup", function(e) {
-		if(e.code === "ArrowLeft")  { controller["ArrowLeft"] = 0; }
-		if(e.code === "ArrowRight") { controller["ArrowRight"] = 0; }
-		if(e.code === "ArrowUp")    { controller["ArrowUp"] = 0; }
-		if(e.code === "ArrowDown")  { controller["ArrowDown"] = 0; }
-		if(e.code === "KeyA")       { controller["KeyA"] = 0; }
-		if(e.code === "KeyD")       { controller["KeyD"] = 0; }
+		if(e.code === "ArrowLeft")  { CONTROLLER["ArrowLeft"] = 0; }
+		if(e.code === "ArrowRight") { CONTROLLER["ArrowRight"] = 0; }
+		if(e.code === "ArrowUp")    { CONTROLLER["ArrowUp"] = 0; }
+		if(e.code === "ArrowDown")  { CONTROLLER["ArrowDown"] = 0; }
+		if(e.code === "KeyA")       { CONTROLLER["KeyA"] = 0; }
+		if(e.code === "KeyD")       { CONTROLLER["KeyD"] = 0; }
 	})
 
 	setInterval(function(e) {
-		// Move character
-		if(controller["ArrowLeft"] === 1)
-		{
-			player["x"] -= Math.cos(player["angle"] + visionSpread);
-			player["y"] -= Math.sin(player["angle"] + visionSpread);
-		}
-		if(controller["ArrowRight"] === 1)
-		{
-			player["x"] += Math.cos(player["angle"] + visionSpread);
-			player["y"] += Math.sin(player["angle"] + visionSpread);
-		}
-		if(controller["ArrowUp"] === 1)
-		{
-			player["x"] += Math.cos(player["angle"] + visionSpread - Math.PI / 2);
-			player["y"] += Math.sin(player["angle"] + visionSpread - Math.PI / 2);
-
-		}
-		if(controller["ArrowDown"] === 1)
-		{
-			player["x"] -= Math.cos(player["angle"] + visionSpread - Math.PI / 2);
-			player["y"] -= Math.sin(player["angle"] + visionSpread - Math.PI / 2);
-		}
-		
-		// Rotate character
-		if(controller["KeyA"] === 1)
-		{
-			player["angle"] -= rotateAngle;
-			player["angle"] %= (two_pi);
-		}
-		if(controller["KeyD"] === 1)
-		{
-			player["angle"] += rotateAngle;
-			player["angle"] %= (two_pi);
-		}
+		movePlayer();
+		rotatePlayer();
 
 		// Figure out what the POV should look like
 		let angle_incr = (visionSpread) / WIDTH;
 		let rel_heights = [];
 		for(
-			angle = player["angle"] - visionSpread / 2;
-			angle < player["angle"] + visionSpread / 2;
+			angle = PLAYER["angle"] - visionSpread / 2;
+			angle < PLAYER["angle"] + visionSpread / 2;
 			angle += angle_incr)
 		{
 			let depthReached = 10000000;
 			for(let d=0; d<drawDistance; d++)
 			{
 				let pos_vector = [
-					player["x"] + ( Math.cos(angle) ) * d,
-					player["y"] + ( Math.sin(angle) ) * d
+					PLAYER["x"] + ( Math.cos(angle) ) * d,
+					PLAYER["y"] + ( Math.sin(angle) ) * d
 				]
 
 				pos_vector[0] = parseInt(pos_vector[0]);
@@ -199,12 +199,10 @@
 			rel_heights.push(depthReached);
 		}
 
-		// draw the floor
 		clearScreen();
 		ctx.fillStyle = FLOOR_COLOR
 		ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
 
-		// draw the enemies
 		ctx.fillStyle = WALL_COLOR;
 		for(k=0; k<WIDTH; k+=1)
 		{
@@ -213,7 +211,7 @@
 			ctx.fillRect(k, y_pos, 1, enemyHeight);
 		}
 
-		// for debugging screen
+		// draw bird's eye view for debugging
 		clearScreen_2();
 		drawPlayer_2();
 		drawEnemy_2();
