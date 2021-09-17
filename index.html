@@ -36,6 +36,14 @@
 	const SCREEN_CLEAR = "#EEEEEE";
 	const FLOOR_COLOR = "#334257";
 	const WALL_COLOR  = "#548CA8";
+	const EVENT_CODES = [
+		"ArrowLeft",
+		"ArrowRight",
+		"ArrowUp",
+		"ArrowDown",
+		"KeyA",
+		"KeyD",
+	];
 
 	const two_pi = 2 * Math.PI;
 	const visionSpread = Math.PI/2;
@@ -43,6 +51,14 @@
 	const drawDistance = 80;
 
 	const CONTROLLER = {
+		ArrowDown: 0,
+		ArrowUp: 0,
+		ArrowLeft: 0,
+		ArrowRight: 0,
+		KeyA: 0,
+		KeyD: 0,
+	}
+	const INPUT_TIMER = {
 		ArrowDown: 0,
 		ArrowUp: 0,
 		ArrowLeft: 0,
@@ -127,7 +143,6 @@
 		{
 			PLAYER["x"] += Math.cos(PLAYER["angle"] + visionSpread - Math.PI / 2);
 			PLAYER["y"] += Math.sin(PLAYER["angle"] + visionSpread - Math.PI / 2);
-
 		}
 		if(CONTROLLER["ArrowDown"] === 1)
 		{
@@ -151,21 +166,27 @@
 	}
 
 	document.addEventListener("keydown", function(e) {
-		if(e.code === "ArrowLeft")  { CONTROLLER["ArrowLeft"] = 1; }
-		if(e.code === "ArrowRight") { CONTROLLER["ArrowRight"] = 1; }
-		if(e.code === "ArrowUp")    { CONTROLLER["ArrowUp"] = 1; }
-		if(e.code === "ArrowDown")  { CONTROLLER["ArrowDown"] = 1; }
-		if(e.code === "KeyA")       { CONTROLLER["KeyA"] = 1; }
-		if(e.code === "KeyD")       { CONTROLLER["KeyD"] = 1; }
+
+		for(code of EVENT_CODES)
+		{
+			if(e.code === code)
+			{
+				CONTROLLER[code] = 1;
+				INPUT_TIMER[code] += 1;
+			}	
+		}
 	})
 
 	document.addEventListener("keyup", function(e) {
-		if(e.code === "ArrowLeft")  { CONTROLLER["ArrowLeft"] = 0; }
-		if(e.code === "ArrowRight") { CONTROLLER["ArrowRight"] = 0; }
-		if(e.code === "ArrowUp")    { CONTROLLER["ArrowUp"] = 0; }
-		if(e.code === "ArrowDown")  { CONTROLLER["ArrowDown"] = 0; }
-		if(e.code === "KeyA")       { CONTROLLER["KeyA"] = 0; }
-		if(e.code === "KeyD")       { CONTROLLER["KeyD"] = 0; }
+
+		for(code of EVENT_CODES)
+		{
+			if(e.code === code)
+			{
+				CONTROLLER[code] = 0;
+				INPUT_TIMER[code] = 0;
+			}
+		}
 	})
 
 	setInterval(function(e) {
