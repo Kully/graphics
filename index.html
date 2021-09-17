@@ -22,6 +22,8 @@
 
 
 <script type="text/javascript">
+	"use strict";
+
 	let canvas = document.getElementById("my-canvas");
 	let ctx = canvas.getContext("2d");
 
@@ -30,7 +32,7 @@
 
 	const WIDTH = 600;
 	const HEIGHT = 400;
-	const FPS = 60;
+	const FPS = 2;  // 60
 
 	const WHITE = "rgb(255,255,255)";
 	const SCREEN_CLEAR = "#EEEEEE";
@@ -102,7 +104,7 @@
 
 	function drawEnemy_2()
 	{
-		for(en of [enemy])
+		for(let en of [enemy])
 		{
 			ctx2.fillStyle = en["color"];
 			ctx2.fillRect(
@@ -116,8 +118,8 @@
 
 	function insideEnemy(pos_x, pos_y, enemy)
 	{
-		for(i=enemy["x"]; i<enemy["x"]+enemy["w"]; i++)
-			for(j=enemy["y"]; j<enemy["y"]+enemy["h"]; j++)
+		for(let i=enemy["x"]; i<enemy["x"]+enemy["w"]; i++)
+			for(let j=enemy["y"]; j<enemy["y"]+enemy["h"]; j++)
 			{
 				if(pos_x === i && pos_y === j)
 				{
@@ -166,30 +168,37 @@
 	}
 
 	document.addEventListener("keydown", function(e) {
-
-		for(code of EVENT_CODES)
-		{
-			if(e.code === code)
-			{
-				CONTROLLER[code] = 1;
-				INPUT_TIMER[code] += 1;
-			}	
-		}
+		if(e.code === "ArrowLeft")  { CONTROLLER["ArrowLeft"] = 1; }
+		if(e.code === "ArrowRight") { CONTROLLER["ArrowRight"] = 1; }
+		if(e.code === "ArrowUp")    { CONTROLLER["ArrowUp"] = 1; }
+		if(e.code === "ArrowDown")  { CONTROLLER["ArrowDown"] = 1; }
+		if(e.code === "KeyA")       { CONTROLLER["KeyA"] = 1; }
+		if(e.code === "KeyD")       { CONTROLLER["KeyD"] = 1; }
 	})
 
 	document.addEventListener("keyup", function(e) {
-
-		for(code of EVENT_CODES)
-		{
-			if(e.code === code)
-			{
-				CONTROLLER[code] = 0;
-				INPUT_TIMER[code] = 0;
-			}
-		}
+		if(e.code === "ArrowLeft")  { CONTROLLER["ArrowLeft"] = 0; }
+		if(e.code === "ArrowRight") { CONTROLLER["ArrowRight"] = 0; }
+		if(e.code === "ArrowUp")    { CONTROLLER["ArrowUp"] = 0; }
+		if(e.code === "ArrowDown")  { CONTROLLER["ArrowDown"] = 0; }
+		if(e.code === "KeyA")       { CONTROLLER["KeyA"] = 0; }
+		if(e.code === "KeyD")       { CONTROLLER["KeyD"] = 0; }
 	})
 
 	setInterval(function(e) {
+		// function: count how long each controller button is held down
+		for(let code of EVENT_CODES)
+		{
+			if(CONTROLLER[code] === 1)
+			{
+				INPUT_TIMER[code] += 1;
+			}
+			else
+			{
+				INPUT_TIMER[code] = 0;
+			}
+		}
+
 		movePlayer();
 		rotatePlayer();
 
@@ -197,7 +206,7 @@
 		let angle_incr = (visionSpread) / WIDTH;
 		let rel_heights = [];
 		for(
-			angle = PLAYER["angle"] - visionSpread / 2;
+			let angle = PLAYER["angle"] - visionSpread / 2;
 			angle < PLAYER["angle"] + visionSpread / 2;
 			angle += angle_incr)
 		{
@@ -225,7 +234,7 @@
 		ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
 
 		ctx.fillStyle = WALL_COLOR;
-		for(k=0; k<WIDTH; k+=1)
+		for(let k=0; k<WIDTH; k+=1)
 		{
 			let enemyHeight = enemy["z"] / rel_heights[k] * (HEIGHT / drawDistance);
 			let y_pos = (HEIGHT - enemyHeight) / 2
