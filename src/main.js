@@ -16,16 +16,20 @@ import {
 } from "./constants.js";
 
 import {
+    keydownHandler,
+    keyupHandler
+} from "./event_handlers.js"
+
+import {
+    insideEnemy,
+} from "./helpers.js";
+
+import {
     CONTROLLER,
     INPUT_TIMER,
     PLAYER,
     BLOCK,
 } from "./state.js"
-
-
-import {
-    insideEnemy,
-} from "./helpers.js";
 
 
 let canvas = document.getElementById("my-canvas");
@@ -105,26 +109,18 @@ function rotatePlayer()
     }
 }
 
-document.addEventListener("keydown", function(e) {
-    if(e.code === "ArrowLeft")  { CONTROLLER["ArrowLeft"] = 1; }
-    if(e.code === "ArrowRight") { CONTROLLER["ArrowRight"] = 1; }
-    if(e.code === "ArrowUp")    { CONTROLLER["ArrowUp"] = 1; }
-    if(e.code === "ArrowDown")  { CONTROLLER["ArrowDown"] = 1; }
-    if(e.code === "KeyA")       { CONTROLLER["KeyA"] = 1; }
-    if(e.code === "KeyD")       { CONTROLLER["KeyD"] = 1; }
-})
 
-document.addEventListener("keyup", function(e) {
-    if(e.code === "ArrowLeft")  { CONTROLLER["ArrowLeft"] = 0; }
-    if(e.code === "ArrowRight") { CONTROLLER["ArrowRight"] = 0; }
-    if(e.code === "ArrowUp")    { CONTROLLER["ArrowUp"] = 0; }
-    if(e.code === "ArrowDown")  { CONTROLLER["ArrowDown"] = 0; }
-    if(e.code === "KeyA")       { CONTROLLER["KeyA"] = 0; }
-    if(e.code === "KeyD")       { CONTROLLER["KeyD"] = 0; }
-})
+document.addEventListener(
+    "keydown", keydownHandler
+)
 
-setInterval(function(e) {
-    // function: count how long each controller button is held down
+document.addEventListener(
+    "keyup", keyupHandler
+)
+
+
+function gameLoop(e)
+{
     for(let code of EVENT_CODES)
     {
         if(CONTROLLER[code] === 1)
@@ -179,4 +175,7 @@ setInterval(function(e) {
     clearScreen_2();
     drawPlayer_2();
     drawEnemy_2();
-}, 1000 / FPS)
+}
+
+
+setInterval(gameLoop, 1000 / FPS)
