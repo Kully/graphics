@@ -25,3 +25,13 @@ export const EVENT_CODES = [
     "KeyA",
     "KeyD",
 ];
+
+// this only supports a max of 6 frames
+export const FRAME_VELO_LOOKUP = {
+    0: 0,
+    1: 0.24,
+    2: 0.4,
+    3: 0.6,
+    4: 0.8,
+    5: 1,
+}

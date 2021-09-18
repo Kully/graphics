@@ -13,6 +13,7 @@ import {
     ROTATE_ANGLE,
     DRAW_DISTANCE,
     EVENT_CODES,
+    FRAME_VELO_LOOKUP,
 } from "./constants.js";
 
 import {
@@ -71,44 +72,10 @@ function drawBlock_2()
     }
 }
 
-function acc_frac(n)
+function lookupVelocity(n)
 {
-    if(n === 0)
-        return 0;
-    if(n <= 4)
-        return 0.2;
-    if(n <= 8)
-        return 0.5;
-    if(n <= 12)
-        return 0.6;
-    if(n <= 14)
-        return 0.8;
-    else
-        return 1;
+    return FRAME_VELO_LOOKUP[n];
 }
-
-
-function acc_frac_2(n)
-{
-    let new_n = Math.min(n, 9);
-    console.log("new_n is ", new_n);
-
-    let acceleration_lookup = {
-        0: 0,
-        1: 0.1,
-        2: 0.15,
-        3: 0.2,
-        4: 0.29,
-        5: 0.44,
-        6: 0.56,
-        7: 0.62,
-        8: 0.77,
-        9: 0.89,
-        10: 1,
-    }
-    return acceleration_lookup[new_n];
-}
-
 
 
 function movePlayer()
@@ -150,19 +117,15 @@ function rotatePlayer()
 }
 
 
-document.addEventListener(
-    "keydown", keydownHandler
-)
+document.addEventListener("keydown", keydownHandler)
 
-document.addEventListener(
-    "keyup", keyupHandler
-)
+document.addEventListener("keyup", keyupHandler)
 
 function gameLoop(e)
 {
-    // acceleration
-    let max_frame = 20
-    for(let code of ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "KeyA", "KeyD"])
+    // manage acceleration
+    let max_frame = 5
+    for(let code of EVENT_CODES)
     {
         if(CONTROLLER[code] === 1)
         {
@@ -180,36 +143,38 @@ function gameLoop(e)
         }
     }
 
-
-    // Move player
-    let x_velo_l = acc_frac(INPUT_TIMER["ArrowLeft"]);
-    let x_velo_r = acc_frac(INPUT_TIMER["ArrowRight"]);
+    // move player left
+    let x_velo_l = lookupVelocity(INPUT_TIMER["ArrowLeft"]);
     PLAYER["x"] -= x_velo_l * Math.cos(PLAYER["angle"] + VISION_SPREAD);
     PLAYER["y"] -= x_velo_l * Math.sin(PLAYER["angle"] + VISION_SPREAD);
 
+    // move player right
+    let x_velo_r = lookupVelocity(INPUT_TIMER["ArrowRight"]);
     PLAYER["x"] += x_velo_r * Math.cos(PLAYER["angle"] + VISION_SPREAD);
     PLAYER["y"] += x_velo_r * Math.sin(PLAYER["angle"] + VISION_SPREAD);
 
 
-    let x_velo_u = acc_frac(INPUT_TIMER["ArrowUp"]);
-    let x_velo_d = acc_frac(INPUT_TIMER["ArrowDown"]);
+    // move player up
+    let x_velo_u = lookupVelocity(INPUT_TIMER["ArrowUp"]);
     PLAYER["x"] += x_velo_u * Math.cos(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
     PLAYER["y"] += x_velo_u * Math.sin(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
     
+    // move player down
+    let x_velo_d = lookupVelocity(INPUT_TIMER["ArrowDown"]);
     PLAYER["x"] -= x_velo_d * Math.cos(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
     PLAYER["y"] -= x_velo_d * Math.sin(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
 
-
-
-    // Rotate player
-    let x_velo_keya = acc_frac_2(INPUT_TIMER["KeyA"]);
-    let x_velo_keyd = acc_frac_2(INPUT_TIMER["KeyD"]);
-
+    // rotate player ccw
+    let x_velo_keya = lookupVelocity(INPUT_TIMER["KeyA"]);
     PLAYER["angle"] -= x_velo_keya * ROTATE_ANGLE;
     PLAYER["angle"] %= (TWO_PI);
 
+    // rotate player cw
+    let x_velo_keyd = lookupVelocity(INPUT_TIMER["KeyD"]);
     PLAYER["angle"] += x_velo_keyd * ROTATE_ANGLE;
     PLAYER["angle"] %= (TWO_PI);
+
+
 
 
     // Calculate the heights of blocks around the player
