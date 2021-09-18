@@ -6,7 +6,8 @@ import {
     FPS,
     COLOR_WHITE,
     COLOR_FLOOR,
-    COLOR_WALL,
+    COLOR_BLOCK,
+    COLOR_PLAYER,
     TWO_PI,
     VISION_SPREAD,
     ROTATE_ANGLE,
@@ -14,7 +15,18 @@ import {
     EVENT_CODES,
 } from "./constants.js";
 
-import { insideEnemy } from "./helpers.js";
+import {
+    CONTROLLER,
+    INPUT_TIMER,
+    PLAYER,
+    BLOCK,
+} from "./state.js"
+
+
+import {
+    insideEnemy,
+} from "./helpers.js";
+
 
 let canvas = document.getElementById("my-canvas");
 let ctx = canvas.getContext("2d");
@@ -22,37 +34,6 @@ let ctx = canvas.getContext("2d");
 let canvas2 = document.getElementById("my-canvas-2");
 let ctx2 = canvas2.getContext("2d");
 
-const CONTROLLER = {
-    ArrowDown: 0,
-    ArrowUp: 0,
-    ArrowLeft: 0,
-    ArrowRight: 0,
-    KeyA: 0,
-    KeyD: 0,
-}
-const INPUT_TIMER = {
-    ArrowDown: 0,
-    ArrowUp: 0,
-    ArrowLeft: 0,
-    ArrowRight: 0,
-    KeyA: 0,
-    KeyD: 0,
-}
-const PLAYER = {
-    x: WIDTH/2+10,
-    y: HEIGHT/2,
-    w: 10,
-    h: 10,
-    color: "#D54C4C",
-    angle: 0,
-};
-let enemy = {
-    x: WIDTH/2 + 20,
-    y: HEIGHT/2 - 35,
-    z: 300,
-    w: 20,
-    h: 20,
-};
 
 function clearScreen()
 {
@@ -74,7 +55,7 @@ function drawPlayer_2()
 
 function drawEnemy_2()
 {
-    for(let en of [enemy])
+    for(let en of [BLOCK])
     {
         ctx2.fillStyle = en["color"];
         ctx2.fillRect(
@@ -124,7 +105,6 @@ function rotatePlayer()
     }
 }
 
-
 document.addEventListener("keydown", function(e) {
     if(e.code === "ArrowLeft")  { CONTROLLER["ArrowLeft"] = 1; }
     if(e.code === "ArrowRight") { CONTROLLER["ArrowRight"] = 1; }
@@ -148,13 +128,9 @@ setInterval(function(e) {
     for(let code of EVENT_CODES)
     {
         if(CONTROLLER[code] === 1)
-        {
             INPUT_TIMER[code] += 1;
-        }
         else
-        {
             INPUT_TIMER[code] = 0;
-        }
     }
 
     movePlayer();
@@ -179,7 +155,7 @@ setInterval(function(e) {
             pos_vector[0] = parseInt(pos_vector[0]);
             pos_vector[1] = parseInt(pos_vector[1]);
 
-            if(insideEnemy(pos_vector[0], pos_vector[1], enemy))
+            if(insideEnemy(pos_vector[0], pos_vector[1], BLOCK))
             {
                 depthReached = Math.min(d, depthReached);
             }
@@ -191,10 +167,10 @@ setInterval(function(e) {
     ctx.fillStyle = COLOR_FLOOR
     ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
 
-    ctx.fillStyle = COLOR_WALL;
+    ctx.fillStyle = BLOCK["color"];
     for(let k=0; k<WIDTH; k+=1)
     {
-        let enemyHeight = enemy["z"] / rel_heights[k] * (HEIGHT / DRAW_DISTANCE);
+        let enemyHeight = BLOCK["z"] / rel_heights[k] * (HEIGHT / DRAW_DISTANCE);
         let y_pos = (HEIGHT - enemyHeight) / 2
         ctx.fillRect(k, y_pos, 1, enemyHeight);
     }

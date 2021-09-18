@@ -8,7 +8,8 @@ export const FPS = 60;
 // colors
 export const COLOR_WHITE = "#EEEEEE";
 export const COLOR_FLOOR = "#334257";
-export const COLOR_WALL  = "#548CA8";
+export const COLOR_BLOCK = "#548CA8";
+export const COLOR_PLAYER = "#D54C4C"
 
 // constants for drawing algo
 export const TWO_PI = 2 * Math.PI;
