@@ -16,7 +16,7 @@ export const CONTROLLER = {
     KeyA: 0,
     KeyD: 0,
 };
-export const INPUT_TIMER = {
+export const KEYDOWN_COUNTER = {
     ArrowDown: 0,
     ArrowUp: 0,
     ArrowLeft: 0,

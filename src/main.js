@@ -27,7 +27,7 @@ import {
 
 import {
     CONTROLLER,
-    INPUT_TIMER,
+    KEYDOWN_COUNTER,
     PLAYER,
     BLOCK,
 } from "./state.js"
@@ -142,9 +142,9 @@ function gameLoop(e)
     {
         if(CONTROLLER[code] === 1)
         {
-            INPUT_TIMER[code] = Math.min(
+            KEYDOWN_COUNTER[code] = Math.min(
                 max_frame,
-                INPUT_TIMER[code] + 1
+                KEYDOWN_COUNTER[code] + 1
             );
 
             // display keys down in front-end
@@ -153,41 +153,41 @@ function gameLoop(e)
         }
         else
         {
-            INPUT_TIMER[code] = Math.max(
+            KEYDOWN_COUNTER[code] = Math.max(
                 0,
-                INPUT_TIMER[code] - 1
+                KEYDOWN_COUNTER[code] - 1
             );
         }
     }
 
     // move player left
-    let x_velo_l = lookupVelocity(INPUT_TIMER["ArrowLeft"]);
+    let x_velo_l = lookupVelocity(KEYDOWN_COUNTER["ArrowLeft"]);
     PLAYER["x"] -= x_velo_l * Math.cos(PLAYER["angle"] + VISION_SPREAD);
     PLAYER["y"] -= x_velo_l * Math.sin(PLAYER["angle"] + VISION_SPREAD);
 
     // move player right
-    let x_velo_r = lookupVelocity(INPUT_TIMER["ArrowRight"]);
+    let x_velo_r = lookupVelocity(KEYDOWN_COUNTER["ArrowRight"]);
     PLAYER["x"] += x_velo_r * Math.cos(PLAYER["angle"] + VISION_SPREAD);
     PLAYER["y"] += x_velo_r * Math.sin(PLAYER["angle"] + VISION_SPREAD);
 
 
     // move player up
-    let x_velo_u = lookupVelocity(INPUT_TIMER["ArrowUp"]);
+    let x_velo_u = lookupVelocity(KEYDOWN_COUNTER["ArrowUp"]);
     PLAYER["x"] += x_velo_u * Math.cos(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
     PLAYER["y"] += x_velo_u * Math.sin(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
     
     // move player down
-    let x_velo_d = lookupVelocity(INPUT_TIMER["ArrowDown"]);
+    let x_velo_d = lookupVelocity(KEYDOWN_COUNTER["ArrowDown"]);
     PLAYER["x"] -= x_velo_d * Math.cos(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
     PLAYER["y"] -= x_velo_d * Math.sin(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
 
     // rotate player ccw
-    let x_velo_keya = lookupVelocity(INPUT_TIMER["KeyA"]);
+    let x_velo_keya = lookupVelocity(KEYDOWN_COUNTER["KeyA"]);
     PLAYER["angle"] -= x_velo_keya * ROTATE_ANGLE;
     PLAYER["angle"] %= (TWO_PI);
 
     // rotate player cw
-    let x_velo_keyd = lookupVelocity(INPUT_TIMER["KeyD"]);
+    let x_velo_keyd = lookupVelocity(KEYDOWN_COUNTER["KeyD"]);
     PLAYER["angle"] += x_velo_keyd * ROTATE_ANGLE;
     PLAYER["angle"] %= (TWO_PI);
 

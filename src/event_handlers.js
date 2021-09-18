@@ -1,4 +1,4 @@
-import { CONTROLLER, INPUT_TIMER } from "./state.js"
+import { CONTROLLER, KEYDOWN_COUNTER } from "./state.js"
 
 
 export function keydownHandler(e)
