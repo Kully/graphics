@@ -33,11 +33,24 @@ import {
 } from "./state.js"
 
 
+const EVENTCODE_CHAR_LOOKUP = {
+    ArrowLeft: "←",
+    ArrowRight: "→",
+    ArrowUp: "↑",
+    ArrowDown: "↓",
+    KeyA: "A",
+    KeyD: "D",
+}
+
+
 let canvas = document.getElementById("my-canvas");
 let ctx = canvas.getContext("2d");
 
 let canvas2 = document.getElementById("my-canvas-2");
 let ctx2 = canvas2.getContext("2d");
+
+
+let keypressDisplay = document.getElementById("keypress-display");
 
 
 function clearScreen()
@@ -123,8 +136,8 @@ document.addEventListener("keyup", keyupHandler)
 
 function gameLoop(e)
 {
-    // manage acceleration
     let max_frame = 5
+    keypressDisplay.innerHTML = "";
     for(let code of EVENT_CODES)
     {
         if(CONTROLLER[code] === 1)
@@ -133,6 +146,10 @@ function gameLoop(e)
                 max_frame,
                 INPUT_TIMER[code] + 1
             );
+
+            // display keys down in front-end
+            keypressDisplay.innerHTML += EVENTCODE_CHAR_LOOKUP[code];
+            keypressDisplay.innerHTML += " ";
         }
         else
         {
@@ -173,8 +190,6 @@ function gameLoop(e)
     let x_velo_keyd = lookupVelocity(INPUT_TIMER["KeyD"]);
     PLAYER["angle"] += x_velo_keyd * ROTATE_ANGLE;
     PLAYER["angle"] %= (TWO_PI);
-
-
 
 
     // Calculate the heights of blocks around the player
