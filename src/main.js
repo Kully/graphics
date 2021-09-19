@@ -14,6 +14,7 @@ import {
     DRAW_DISTANCE,
     EVENT_CODES,
     FRAME_VELO_LOOKUP,
+    BIG_NUMBER,
 } from "./constants.js";
 
 import {
@@ -44,7 +45,7 @@ const LEVEL_OBJECTS = [
     {
         x: WIDTH/2 + 50,
         y: HEIGHT/2 - 35,
-        z: 300,
+        z: 400,
         w: 20,
         h: 20,
         color: "block",
@@ -211,16 +212,17 @@ function gameLoop(e)
     PLAYER["angle"] %= (TWO_PI);
 
 
+
     // Calculate the heights of blocks around the player
     let angle_incr = (VISION_SPREAD) / WIDTH;
     let rel_heights = [];
     for(
         let angle = PLAYER["angle"] - VISION_SPREAD / 2;
-        angle < PLAYER["angle"] + VISION_SPREAD / 2;
-        angle += angle_incr
+            angle < PLAYER["angle"] + VISION_SPREAD / 2;
+                angle += angle_incr
     )
     {
-        let depthReached = 10000000;
+        let depthReached = BIG_NUMBER;
         for(let d=0; d<DRAW_DISTANCE; d++)
         {
             let vector = [
@@ -246,15 +248,15 @@ function gameLoop(e)
     ctx.fillStyle = COLOR_FLOOR;
     ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
 
-    // ctx.fillStyle = COLOR_BLOCK;
+    ctx.fillStyle = COLOR_BLOCK;
     for(let x=0; x<WIDTH; x+=1)
     {
-        let h = LEVEL_OBJECTS[0]["z"] / rel_heights[x] * (HEIGHT / DRAW_DISTANCE);
-        let y_pos = (HEIGHT - h) / 2;
-
-        let colorGrad = 2 * (h / HEIGHT)
-        ctx.fillStyle = `rgba(0,0,${parseInt(colorGrad * 255)})`;
-        ctx.fillRect(x, y_pos, 1, h);
+        if(rel_heights[x] !== BIG_NUMBER)
+        {
+            let h = LEVEL_OBJECTS[0]["z"] / rel_heights[x] * (HEIGHT / DRAW_DISTANCE);
+            let y_pos = (HEIGHT - h) / 2;
+            ctx.fillRect(x, y_pos, 1, h);
+        }
     }
 
     // draw bird's eye view
