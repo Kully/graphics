@@ -158,7 +158,6 @@ function gameLoop(e)
     clearScreen(ctx, COLOR_WHITE);
     ctx.fillStyle = COLOR_FLOOR;
     ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
-
     let x = 0;
     let objectPtr = 0;
     for(
