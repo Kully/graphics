@@ -6,7 +6,6 @@ import {
     FPS,
     COLOR_WHITE,
     COLOR_FLOOR,
-    COLOR_BLOCK,
     COLOR_PLAYER,
     TWO_PI,
     VISION_SPREAD,
@@ -14,6 +13,7 @@ import {
     DRAW_DISTANCE,
     EVENT_CODES,
     FRAME_VELO_LOOKUP,
+    BIG_NUMBER,
 } from "./constants.js";
 
 import {
@@ -23,14 +23,35 @@ import {
 
 import {
     insideObject,
+    distance,
+    objectCenter,
 } from "./helpers.js";
 
 import {
     CONTROLLER,
     KEYDOWN_COUNTER,
     PLAYER,
-    BLOCK,
 } from "./state.js"
+
+
+const LEVEL_OBJECTS = [
+    {
+        x: WIDTH/2 + 20,
+        y: HEIGHT/2 - 35,
+        z: 300,
+        w: 20,
+        h: 20,
+        color: "#548CA8",
+    },
+    {
+        x: WIDTH/2 + 50,
+        y: HEIGHT/2 - 35,
+        z: 400,
+        w: 20,
+        h: 20,
+        color: "#5F8CD8",
+    },
+];
 
 
 const EVENTCODE_CHAR_LOOKUP = {
@@ -73,15 +94,10 @@ function drawPlayer_2()
 
 function drawBlock_2()
 {
-    for(let en of [BLOCK])
+    for(let obj of LEVEL_OBJECTS)
     {
-        ctx2.fillStyle = en["color"];
-        ctx2.fillRect(
-            en["x"],
-            en["y"],
-            en["w"],
-            en["h"]
-        );
+        ctx2.fillStyle = obj["color"];
+        ctx2.fillRect(obj["x"], obj["y"], obj["w"], obj["h"]);
     }
 }
 
@@ -192,41 +208,44 @@ function gameLoop(e)
     PLAYER["angle"] %= (TWO_PI);
 
 
-    // Calculate the heights of blocks around the player
-    let angle_incr = (VISION_SPREAD) / WIDTH;
-    let rel_heights = [];
-    for(
-        let angle = PLAYER["angle"] - VISION_SPREAD / 2;
-        angle < PLAYER["angle"] + VISION_SPREAD / 2;
-        angle += angle_incr)
-    {
-        let depthReached = 10000000;
-        for(let d=0; d<DRAW_DISTANCE; d++)
-        {
-            let pos_vector = [
-                PLAYER["x"] + ( Math.cos(angle) ) * d,
-                PLAYER["y"] + ( Math.sin(angle) ) * d
-            ]
-
-            pos_vector[0] = parseInt(pos_vector[0]);
-            pos_vector[1] = parseInt(pos_vector[1]);
-
-            if(insideObject(pos_vector[0], pos_vector[1], BLOCK))
-            {
-                depthReached = Math.min(d, depthReached);
-            }
-        }
-        rel_heights.push(depthReached);
-    }
-
+    // draw to screen
     clearScreen();
     ctx.fillStyle = COLOR_FLOOR;
     ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
 
-    ctx.fillStyle = BLOCK["color"];
-    for(let x=0; x<WIDTH; x+=1)
+    let x = 0;
+    let objectPtr = 0;
+    for(
+        let angle = PLAYER["angle"] - VISION_SPREAD / 2;
+            angle < PLAYER["angle"] + VISION_SPREAD / 2;
+                angle += (VISION_SPREAD) / WIDTH
+    )
     {
-        let h = BLOCK["z"] / rel_heights[x] * (HEIGHT / DRAW_DISTANCE);
+        let depthReached = BIG_NUMBER;
+        let d = 0;
+        while(d < DRAW_DISTANCE && depthReached === BIG_NUMBER)
+        {
+            let vector = [
+                PLAYER["x"] + ( Math.cos(angle) ) * d,
+                PLAYER["y"] + ( Math.sin(angle) ) * d
+            ]
+
+            vector[0] = parseInt(vector[0]);
+            vector[1] = parseInt(vector[1]);
+
+            for(let obj_idx in LEVEL_OBJECTS)
+            {
+                if(insideObject(vector[0], vector[1], LEVEL_OBJECTS[obj_idx]))
+                {
+                    depthReached = Math.min(d, depthReached);
+                    objectPtr = obj_idx;
+                }
+            }
+            d += 1;
+        }
+        x+=1;
+        ctx.fillStyle = LEVEL_OBJECTS[objectPtr]["color"];
+        let h = LEVEL_OBJECTS[0]["z"] / depthReached * (HEIGHT / DRAW_DISTANCE);
         let y_pos = (HEIGHT - h) / 2;
         ctx.fillRect(x, y_pos, 1, h);
     }
