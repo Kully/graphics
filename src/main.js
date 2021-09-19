@@ -110,6 +110,11 @@ function lookupVelocity(n)
     return FRAME_VELO_LOOKUP[n];
 }
 
+function euclideanNorm(x, y)
+{
+    return Math.sqrt(x**2 + y**2)
+}
+
 
 function movePlayer()
 {
