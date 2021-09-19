@@ -24,6 +24,8 @@ import {
 
 import {
     insideObject,
+    distance,
+    objectCenter,
 } from "./helpers.js";
 
 import {
@@ -108,11 +110,6 @@ function drawBlock_2()
 function lookupVelocity(n)
 {
     return FRAME_VELO_LOOKUP[n];
-}
-
-function euclideanNorm(x, y)
-{
-    return Math.sqrt(x**2 + y**2)
 }
 
 
@@ -217,14 +214,12 @@ function gameLoop(e)
     PLAYER["angle"] %= (TWO_PI);
 
 
-
-    // Calculate the heights of blocks around the player
-    let angle_incr = (VISION_SPREAD) / WIDTH;
+    // calculate the heights of blocks around the player
     let rel_heights = [];
     for(
         let angle = PLAYER["angle"] - VISION_SPREAD / 2;
             angle < PLAYER["angle"] + VISION_SPREAD / 2;
-                angle += angle_incr
+                angle += (VISION_SPREAD) / WIDTH
     )
     {
         let depthReached = BIG_NUMBER;
