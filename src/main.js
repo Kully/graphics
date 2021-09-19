@@ -6,7 +6,6 @@ import {
     FPS,
     COLOR_WHITE,
     COLOR_FLOOR,
-    COLOR_BLOCK,
     COLOR_PLAYER,
     TWO_PI,
     VISION_SPREAD,
@@ -42,7 +41,7 @@ const LEVEL_OBJECTS = [
         z: 300,
         w: 20,
         h: 20,
-        type: "block",
+        color: "#548CA8",
     },
     {
         x: WIDTH/2 + 50,
@@ -50,7 +49,7 @@ const LEVEL_OBJECTS = [
         z: 400,
         w: 20,
         h: 20,
-        color: "block",
+        color: "#5F8CD8",
     },
 ];
 
@@ -95,15 +94,10 @@ function drawPlayer_2()
 
 function drawBlock_2()
 {
-    for(let en of LEVEL_OBJECTS)
+    for(let obj of LEVEL_OBJECTS)
     {
-        ctx2.fillStyle = COLOR_BLOCK;
-        ctx2.fillRect(
-            en["x"],
-            en["y"],
-            en["w"],
-            en["h"]
-        );
+        ctx2.fillStyle = obj["color"];
+        ctx2.fillRect(obj["x"], obj["y"], obj["w"], obj["h"]);
     }
 }
 
@@ -214,8 +208,13 @@ function gameLoop(e)
     PLAYER["angle"] %= (TWO_PI);
 
 
-    // calculate the heights of blocks around the player
-    let rel_heights = [];
+    // draw to screen
+    clearScreen();
+    ctx.fillStyle = COLOR_FLOOR;
+    ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
+
+    let x = 0;
+    let objectPtr = 0;
     for(
         let angle = PLAYER["angle"] - VISION_SPREAD / 2;
             angle < PLAYER["angle"] + VISION_SPREAD / 2;
@@ -223,7 +222,8 @@ function gameLoop(e)
     )
     {
         let depthReached = BIG_NUMBER;
-        for(let d=0; d<DRAW_DISTANCE; d++)
+        let d = 0;
+        while(d < DRAW_DISTANCE && depthReached === BIG_NUMBER)
         {
             let vector = [
                 PLAYER["x"] + ( Math.cos(angle) ) * d,
@@ -233,30 +233,21 @@ function gameLoop(e)
             vector[0] = parseInt(vector[0]);
             vector[1] = parseInt(vector[1]);
 
-            for(let obj of LEVEL_OBJECTS)
+            for(let obj_idx in LEVEL_OBJECTS)
             {
-                if(insideObject(vector[0], vector[1], obj))
+                if(insideObject(vector[0], vector[1], LEVEL_OBJECTS[obj_idx]))
                 {
                     depthReached = Math.min(d, depthReached);
+                    objectPtr = obj_idx;
                 }
             }
+            d += 1;
         }
-        rel_heights.push(depthReached);
-    }
-
-    clearScreen();
-    ctx.fillStyle = COLOR_FLOOR;
-    ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
-
-    ctx.fillStyle = COLOR_BLOCK;
-    for(let x=0; x<WIDTH; x+=1)
-    {
-        if(rel_heights[x] !== BIG_NUMBER)
-        {
-            let h = LEVEL_OBJECTS[0]["z"] / rel_heights[x] * (HEIGHT / DRAW_DISTANCE);
-            let y_pos = (HEIGHT - h) / 2;
-            ctx.fillRect(x, y_pos, 1, h);
-        }
+        x+=1;
+        ctx.fillStyle = LEVEL_OBJECTS[objectPtr]["color"];
+        let h = LEVEL_OBJECTS[0]["z"] / depthReached * (HEIGHT / DRAW_DISTANCE);
+        let y_pos = (HEIGHT - h) / 2;
+        ctx.fillRect(x, y_pos, 1, h);
     }
 
     // draw bird's eye view
