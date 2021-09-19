@@ -259,6 +259,8 @@ function gameLoop(e)
         if(rel_heights[x] !== BIG_NUMBER)
         {
             let h = LEVEL_OBJECTS[0]["z"] / rel_heights[x] * (HEIGHT / DRAW_DISTANCE);
+            h -= Math.sin( (x / WIDTH) * (TWO_PI / 2) ) * 4
+            h = Math.max(h, 0);
             let y_pos = (HEIGHT - h) / 2;
             ctx.fillRect(x, y_pos, 1, h);
         }
