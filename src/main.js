@@ -223,11 +223,13 @@ function gameLoop(e)
     ctx.fillStyle = COLOR_FLOOR;
     ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
 
-    ctx.fillStyle = BLOCK["color"];
     for(let x=0; x<WIDTH; x+=1)
     {
         let h = BLOCK["z"] / rel_heights[x] * (HEIGHT / DRAW_DISTANCE);
         let y_pos = (HEIGHT - h) / 2;
+
+        let colorGrad = 2 * (h / HEIGHT);
+        ctx.fillStyle = `rgba(0,0,${parseInt(colorGrad * 255)})`;
         ctx.fillRect(x, y_pos, 1, h);
     }
 
