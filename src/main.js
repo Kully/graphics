@@ -41,7 +41,7 @@ const LEVEL_OBJECTS = [
         z: 300,
         w: 20,
         h: 20,
-        color: "#548CA8",
+        color: "#63B4B8",
     },
     {
         x: WIDTH/2 + 50,
@@ -49,7 +49,7 @@ const LEVEL_OBJECTS = [
         z: 400,
         w: 20,
         h: 20,
-        color: "#5F8CD8",
+        color: "#FF00E4",
     },
 ];
 
