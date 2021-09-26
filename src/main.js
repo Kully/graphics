@@ -54,16 +54,6 @@ const LEVEL_OBJECTS = [
 ];
 
 
-const EVENTCODE_CHAR_LOOKUP = {
-    ArrowLeft: "←",
-    ArrowRight: "→",
-    ArrowUp: "↑",
-    ArrowDown: "↓",
-    KeyA: "A",
-    KeyD: "D",
-}
-
-
 let canvas = document.getElementById("my-canvas");
 let ctx = canvas.getContext("2d");
 
