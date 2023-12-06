@@ -4,12 +4,13 @@
 export const WIDTH = 600;
 export const HEIGHT = 400;
 export const FPS = 60;
+export const BIG_NUMBER = 10000000;
 
 // colors
 export const COLOR_WHITE = "#EEEEEE";
-export const COLOR_FLOOR = "#334257";
+export const COLOR_FLOOR = "#4B3869";
 export const COLOR_BLOCK = "#548CA8";
-export const COLOR_PLAYER = "#D54C4C"
+export const COLOR_PLAYER = "#D54C4C";
 
 // constants for drawing algo
 export const TWO_PI = 2 * Math.PI;

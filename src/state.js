@@ -32,11 +32,3 @@ export const PLAYER = {
     color: COLOR_PLAYER,
     angle: 0,
 };
-export const BLOCK = {
-    x: WIDTH/2 + 20,
-    y: HEIGHT/2 - 35,
-    z: 300,
-    w: 20,
-    h: 20,
-    color: COLOR_BLOCK,
-};
