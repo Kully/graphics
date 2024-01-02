@@ -93,23 +93,23 @@ function veloLookup(n)
 function movePlayer()
 {
     // move left
-    let x_velo_l = veloLookup(KEYDOWN_COUNTER["ArrowLeft"]);
+    let x_velo_l = veloLookup(KEYDOWN_COUNTER["KeyA"]);
     PLAYER["x"] -= x_velo_l * Math.cos(PLAYER["angle"] + VISION_SPREAD);
     PLAYER["y"] -= x_velo_l * Math.sin(PLAYER["angle"] + VISION_SPREAD);
 
     // move right
-    let x_velo_r = veloLookup(KEYDOWN_COUNTER["ArrowRight"]);
+    let x_velo_r = veloLookup(KEYDOWN_COUNTER["KeyD"]);
     PLAYER["x"] += x_velo_r * Math.cos(PLAYER["angle"] + VISION_SPREAD);
     PLAYER["y"] += x_velo_r * Math.sin(PLAYER["angle"] + VISION_SPREAD);
 
 
     // move forwards
-    let x_velo_u = veloLookup(KEYDOWN_COUNTER["ArrowUp"]);
+    let x_velo_u = veloLookup(KEYDOWN_COUNTER["KeyW"]);
     PLAYER["x"] += x_velo_u * Math.cos(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
     PLAYER["y"] += x_velo_u * Math.sin(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
     
     // move backwards
-    let x_velo_d = veloLookup(KEYDOWN_COUNTER["ArrowDown"]);
+    let x_velo_d = veloLookup(KEYDOWN_COUNTER["KeyS"]);
     PLAYER["x"] -= x_velo_d * Math.cos(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
     PLAYER["y"] -= x_velo_d * Math.sin(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
 }
@@ -118,13 +118,13 @@ function movePlayer()
 function rotatePlayer()
 {
     // counter-clockwise
-    let x_velo_keya = veloLookup(KEYDOWN_COUNTER["KeyA"]);
-    PLAYER["angle"] -= x_velo_keya * ROTATE_ANGLE;
+    let x_velo_KeyI = veloLookup(KEYDOWN_COUNTER["KeyI"]);
+    PLAYER["angle"] -= x_velo_KeyI * ROTATE_ANGLE;
     PLAYER["angle"] %= (TWO_PI);
 
     // clockwise
-    let x_velo_keyd = veloLookup(KEYDOWN_COUNTER["KeyD"]);
-    PLAYER["angle"] += x_velo_keyd * ROTATE_ANGLE;
+    let x_velo_KeyP = veloLookup(KEYDOWN_COUNTER["KeyP"]);
+    PLAYER["angle"] += x_velo_KeyP * ROTATE_ANGLE;
     PLAYER["angle"] %= (TWO_PI);
 }
 
