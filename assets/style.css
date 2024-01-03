@@ -1,0 +1,23 @@
+body {
+	background-color: #1B1B1B;
+	margin: 0;
+	padding: 0;
+}
+
+canvas {
+	box-shadow: 0 0 8px 4px rgba(0,0,0,0.3);
+}
+
+#my-canvas {
+	position: fixed;
+	display: block;
+	left: calc(50% - 300px);
+	top: calc(50% - 200px - 60px);
+}
+
+#my-canvas-2 {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	transform: scale(0.5) translateX(calc( 600px / 2 - 40px)) translateY(calc(200px - 40px));
+}
