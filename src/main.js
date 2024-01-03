@@ -52,13 +52,13 @@ const LEVEL_OBJECTS = [
         h: 20,
         color: "#FF00E4",
     },
-        {
-        x: WIDTH/2 - 50,
+    {
+        x: WIDTH/2 + 50 + 8,
         y: HEIGHT/2 - 35,
-        z: 400,
-        w: 20,
-        h: 20,
-        color: "#000000",
+        z: 300,
+        w: 2,
+        h: 2,
+        color: "#010101",
     },
 ];
 
