@@ -52,6 +52,14 @@ const LEVEL_OBJECTS = [
         h: 20,
         color: "#FF00E4",
     },
+        {
+        x: WIDTH/2 - 50,
+        y: HEIGHT/2 - 35,
+        z: 400,
+        w: 20,
+        h: 20,
+        color: "#000000",
+    },
 ];
 
 
@@ -130,8 +138,11 @@ function rotatePlayer(e)
     if (newX - lastX <= 0) {
         sign = -1
     }
-    PLAYER["polar"] += sign * Math.floor(Math.abs(newX - lastX)**1.175) * ROTATE_ANGLE * 0.04;
-    PLAYER["polar"] %= (TWO_PI);
+    PLAYER["polar"] += sign * (Math.abs(newX - lastX)**1.1) * 0.006;
+    if(PLAYER["polar"] > Math.PI)
+        PLAYER["polar"] = Math.PI;
+    if(PLAYER["polar"] < -Math.PI)
+        PLAYER["polar"] = -Math.PI;
 
     let azemuthal = Math.floor(newY - lastY);
     PLAYER["azimuthal"] += Math.round(azemuthal);

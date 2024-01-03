@@ -3,7 +3,7 @@
 // screen and fps
 export const WIDTH = 600;
 export const HEIGHT = 400;
-export const FPS = 60;
+export const FPS = 30;
 export const BIG_NUMBER = 10000000;
 
 // colors
