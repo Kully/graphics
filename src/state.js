@@ -35,5 +35,6 @@ export const PLAYER = {
     w: 10,
     h: 10,
     color: COLOR_PLAYER,
-    angle: 0,
+    polar: 0,
+    azimuthal: 0,
 };
