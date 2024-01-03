@@ -31,6 +31,7 @@ import {
     CONTROLLER,
     KEYDOWN_COUNTER,
     PLAYER,
+    CURSOR,
 } from "./state.js"
 
 
@@ -115,21 +116,29 @@ function movePlayer()
 }
 
 
-function rotatePlayer()
+function rotatePlayer(e)
 {
-    // counter-clockwise
-    let x_velo_KeyI = veloLookup(KEYDOWN_COUNTER["KeyI"]);
-    PLAYER["angle"] -= x_velo_KeyI * ROTATE_ANGLE;
-    PLAYER["angle"] %= (TWO_PI);
-
-    // clockwise
-    let x_velo_KeyP = veloLookup(KEYDOWN_COUNTER["KeyP"]);
-    PLAYER["angle"] += x_velo_KeyP * ROTATE_ANGLE;
+    let boundingRect = canvas.getBoundingClientRect();
+    let newX = e.clientX - boundingRect.left;
+    let newY = e.clientY - boundingRect.top;
+    let lastX = CURSOR["x"];
+    let lastY = CURSOR["y"];
+    CURSOR["x"] = newX;
+    CURSOR["y"] = newY;
+    PLAYER["angle"] += (newX - lastX) * ROTATE_ANGLE * 0.03;
     PLAYER["angle"] %= (TWO_PI);
 }
 
 document.addEventListener("keydown", keydownHandler)
 document.addEventListener("keyup", keyupHandler)
+
+document.addEventListener("mousedown", (e) => {
+    CURSOR["mouseDown"] = true;
+});
+document.addEventListener("mouseup", (e) => {
+    CURSOR["mouseDown"] = false;
+});
+canvas.addEventListener("mousemove", rotatePlayer);
 
 function gameLoop(e)
 {
@@ -143,7 +152,6 @@ function gameLoop(e)
     }
 
     movePlayer();
-    rotatePlayer();
 
     clearScreen(ctx, COLOR_WHITE);
     ctx.fillStyle = COLOR_FLOOR;

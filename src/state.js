@@ -16,6 +16,11 @@ export const CONTROLLER = {
     KeyP: 0,
     KeyW: 0,
 };
+export const CURSOR = {
+    x: 300,
+    y: 200,
+    mouseDown: false,
+};
 export const KEYDOWN_COUNTER = {
     KeyS: 0,
     KeyA: 0,
