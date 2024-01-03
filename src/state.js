@@ -9,20 +9,25 @@ import {
 
 
 export const CONTROLLER = {
-    ArrowDown: 0,
-    ArrowUp: 0,
-    ArrowLeft: 0,
-    ArrowRight: 0,
+    KeyS: 0,
     KeyA: 0,
     KeyD: 0,
+    KeyI: 0,
+    KeyP: 0,
+    KeyW: 0,
+};
+export const CURSOR = {
+    x: 300,
+    y: 200,
+    mouseDown: false,
 };
 export const KEYDOWN_COUNTER = {
-    ArrowDown: 0,
-    ArrowUp: 0,
-    ArrowLeft: 0,
-    ArrowRight: 0,
+    KeyS: 0,
     KeyA: 0,
     KeyD: 0,
+    KeyI: 0,
+    KeyP: 0,
+    KeyW: 0,
 };
 export const PLAYER = {
     x: WIDTH/2+10,
@@ -30,5 +35,6 @@ export const PLAYER = {
     w: 10,
     h: 10,
     color: COLOR_PLAYER,
-    angle: 0,
+    polar: 0,
+    azimuthal: 0,
 };

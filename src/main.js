@@ -31,6 +31,7 @@ import {
     CONTROLLER,
     KEYDOWN_COUNTER,
     PLAYER,
+    CURSOR,
 } from "./state.js"
 
 
@@ -50,6 +51,14 @@ const LEVEL_OBJECTS = [
         w: 20,
         h: 20,
         color: "#FF00E4",
+    },
+        {
+        x: WIDTH/2 - 50,
+        y: HEIGHT/2 - 35,
+        z: 400,
+        w: 20,
+        h: 20,
+        color: "#000000",
     },
 ];
 
@@ -93,43 +102,60 @@ function veloLookup(n)
 function movePlayer()
 {
     // move left
-    let x_velo_l = veloLookup(KEYDOWN_COUNTER["ArrowLeft"]);
-    PLAYER["x"] -= x_velo_l * Math.cos(PLAYER["angle"] + VISION_SPREAD);
-    PLAYER["y"] -= x_velo_l * Math.sin(PLAYER["angle"] + VISION_SPREAD);
+    let x_velo_l = veloLookup(KEYDOWN_COUNTER["KeyA"]);
+    PLAYER["x"] -= x_velo_l * Math.cos(PLAYER["polar"] + VISION_SPREAD);
+    PLAYER["y"] -= x_velo_l * Math.sin(PLAYER["polar"] + VISION_SPREAD);
 
     // move right
-    let x_velo_r = veloLookup(KEYDOWN_COUNTER["ArrowRight"]);
-    PLAYER["x"] += x_velo_r * Math.cos(PLAYER["angle"] + VISION_SPREAD);
-    PLAYER["y"] += x_velo_r * Math.sin(PLAYER["angle"] + VISION_SPREAD);
+    let x_velo_r = veloLookup(KEYDOWN_COUNTER["KeyD"]);
+    PLAYER["x"] += x_velo_r * Math.cos(PLAYER["polar"] + VISION_SPREAD);
+    PLAYER["y"] += x_velo_r * Math.sin(PLAYER["polar"] + VISION_SPREAD);
 
 
     // move forwards
-    let x_velo_u = veloLookup(KEYDOWN_COUNTER["ArrowUp"]);
-    PLAYER["x"] += x_velo_u * Math.cos(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
-    PLAYER["y"] += x_velo_u * Math.sin(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
+    let x_velo_u = veloLookup(KEYDOWN_COUNTER["KeyW"]);
+    PLAYER["x"] += x_velo_u * Math.cos(PLAYER["polar"] + VISION_SPREAD - Math.PI / 2);
+    PLAYER["y"] += x_velo_u * Math.sin(PLAYER["polar"] + VISION_SPREAD - Math.PI / 2);
     
     // move backwards
-    let x_velo_d = veloLookup(KEYDOWN_COUNTER["ArrowDown"]);
-    PLAYER["x"] -= x_velo_d * Math.cos(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
-    PLAYER["y"] -= x_velo_d * Math.sin(PLAYER["angle"] + VISION_SPREAD - Math.PI / 2);
+    let x_velo_d = veloLookup(KEYDOWN_COUNTER["KeyS"]);
+    PLAYER["x"] -= x_velo_d * Math.cos(PLAYER["polar"] + VISION_SPREAD - Math.PI / 2);
+    PLAYER["y"] -= x_velo_d * Math.sin(PLAYER["polar"] + VISION_SPREAD - Math.PI / 2);
 }
 
 
-function rotatePlayer()
+function rotatePlayer(e)
 {
-    // counter-clockwise
-    let x_velo_keya = veloLookup(KEYDOWN_COUNTER["KeyA"]);
-    PLAYER["angle"] -= x_velo_keya * ROTATE_ANGLE;
-    PLAYER["angle"] %= (TWO_PI);
+    let boundingRect = canvas.getBoundingClientRect();
+    let newX = e.clientX - boundingRect.left;
+    let newY = e.clientY - boundingRect.top;
+    let lastX = CURSOR["x"];
+    let lastY = CURSOR["y"];
+    CURSOR["x"] = newX;
+    CURSOR["y"] = newY;
 
-    // clockwise
-    let x_velo_keyd = veloLookup(KEYDOWN_COUNTER["KeyD"]);
-    PLAYER["angle"] += x_velo_keyd * ROTATE_ANGLE;
-    PLAYER["angle"] %= (TWO_PI);
+    let sign = 1;
+    if (newX - lastX <= 0) {
+        sign = -1
+    }
+    PLAYER["polar"] += sign * (Math.abs(newX - lastX)**1.1) * 0.006;
+    if(PLAYER["polar"] > Math.PI)
+        PLAYER["polar"] = Math.PI;
+    if(PLAYER["polar"] < -Math.PI)
+        PLAYER["polar"] = -Math.PI;
+
+    let azemuthal = Math.floor(newY - lastY);
+    PLAYER["azimuthal"] += Math.round(azemuthal);
+
+    if(PLAYER["azimuthal"] > 120)
+        PLAYER["azimuthal"] = 120;
+    if(PLAYER["azimuthal"] < -120)
+        PLAYER["azimuthal"] = -120;
 }
 
 document.addEventListener("keydown", keydownHandler)
 document.addEventListener("keyup", keyupHandler)
+canvas.addEventListener("mousemove", rotatePlayer);
 
 function gameLoop(e)
 {
@@ -143,17 +169,16 @@ function gameLoop(e)
     }
 
     movePlayer();
-    rotatePlayer();
 
     clearScreen(ctx, COLOR_WHITE);
     ctx.fillStyle = COLOR_FLOOR;
-    ctx.fillRect(0, HEIGHT/2, WIDTH, HEIGHT / 2);
+    ctx.fillRect(0, HEIGHT/2 - PLAYER["azimuthal"], WIDTH, HEIGHT / 2 + PLAYER["azimuthal"]);
     let x = 0;
     let objectPtr = 0;
     for(
-        let angle = PLAYER["angle"] - VISION_SPREAD / 2;
-            angle < PLAYER["angle"] + VISION_SPREAD / 2;
-                angle += (VISION_SPREAD) / WIDTH
+        let polar = PLAYER["polar"] - VISION_SPREAD / 2;
+            polar < PLAYER["polar"] + VISION_SPREAD / 2;
+                polar += (VISION_SPREAD) / WIDTH
     )
     {
         let depthReached = BIG_NUMBER;
@@ -161,8 +186,8 @@ function gameLoop(e)
         while(d < DRAW_DISTANCE && depthReached === BIG_NUMBER)
         {
             let vector = [
-                PLAYER["x"] + ( Math.cos(angle) ) * d,
-                PLAYER["y"] + ( Math.sin(angle) ) * d
+                PLAYER["x"] + ( Math.cos(polar) ) * d,
+                PLAYER["y"] + ( Math.sin(polar) ) * d
             ]
 
             vector[0] = parseInt(vector[0]);
@@ -182,7 +207,7 @@ function gameLoop(e)
         ctx.fillStyle = LEVEL_OBJECTS[objectPtr]["color"];
         let h = LEVEL_OBJECTS[0]["z"] / depthReached * (HEIGHT / DRAW_DISTANCE);
         let y_pos = (HEIGHT - h) / 2;
-        ctx.fillRect(x, y_pos, 1, h);
+        ctx.fillRect(x, y_pos - PLAYER["azimuthal"], 1, h);
     }
 
     drawCanvas2(ctx2);

@@ -3,7 +3,7 @@
 // screen and fps
 export const WIDTH = 600;
 export const HEIGHT = 400;
-export const FPS = 60;
+export const FPS = 30;
 export const BIG_NUMBER = 10000000;
 
 // colors
@@ -19,12 +19,12 @@ export const ROTATE_ANGLE = Math.PI/32;
 export const DRAW_DISTANCE = 80;
 
 export const EVENT_CODES = [
-    "ArrowLeft",
-    "ArrowRight",
-    "ArrowUp",
-    "ArrowDown",
     "KeyA",
     "KeyD",
+    "KeyS",
+    "KeyI",
+    "KeyP",
+    "KeyW",
 ];
 
 // this only supports a max of 6 frames
