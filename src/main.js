@@ -138,11 +138,7 @@ function rotatePlayer(e)
     if (newX - lastX <= 0) {
         sign = -1
     }
-    PLAYER["polar"] += sign * (Math.abs(newX - lastX)**1.1) * 0.006;
-    if(PLAYER["polar"] > Math.PI)
-        PLAYER["polar"] = Math.PI;
-    if(PLAYER["polar"] < -Math.PI)
-        PLAYER["polar"] = -Math.PI;
+    PLAYER["polar"] += sign * (Math.abs(newX - lastX)**1.32) * 0.006;
 
     let azemuthal = Math.floor(newY - lastY);
     PLAYER["azimuthal"] += Math.round(azemuthal);
